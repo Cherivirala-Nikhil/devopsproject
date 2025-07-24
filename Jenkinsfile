@@ -2,29 +2,44 @@ pipeline {
     agent any
 
     stages {
-stage('Checkout') {
-    steps {
-        git branch: 'main', url: 'https://github.com/Cherivirala-Nikhil/devopsproject.git'
-    }
-}
-
-}
-
-
-     
-
-        stage('Test') {
+        stage('Build') {
             steps {
-                echo 'Performing basic syntax checks on HTML, CSS, and JS...'
-                sh 'ls -l *.html *.css *.js || echo "Files missing or checked."'
+                echo '✅ Building from main folder...'
+                bat 'dir'   // lists all files in current directory
             }
         }
 
-        stage('Restart Container') {
+        stage('Test') {
             steps {
-                echo 'Restarting existing Docker container...'
-                sh 'docker rm -f devopsproject || true'
-                sh 'docker run -d -p 8087:80 --name devopsproject devopsproject:latest'
+                echo '🧪 Testing files in main folder...'
+
+                // Check if index.html exists
+                bat '''
+                if exist index.html (
+                    echo index.html exists ✅
+                ) else (
+                    echo index.html is MISSING ❌
+                    exit /b 1
+                )
+                '''
+
+                // Dummy test: check if style.css contains "body"
+                bat '''
+                findstr "body" style.css >nul
+                if %errorlevel% equ 0 (
+                    echo CSS contains "body" ✅
+                ) else (
+                    echo CSS body tag not found ❌
+                    exit /b 1
+                )
+                '''
+            }
+        }
+
+        stage('Print Commit Message') {
+            steps {
+                echo '📝 Printing Git commit message (if repo was cloned properly)'
+                bat 'git log -1 --pretty=oneline'
             }
         }
     }
