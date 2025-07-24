@@ -2,10 +2,15 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Cherivirala-Nikhil/devopsproject.git'
-            }
+stage('Checkout') {
+    steps {
+        git branch: 'main', url: 'https://github.com/Cherivirala-Nikhil/devopsproject.git'
+    }
+}
+
+}
+
+
         }
 
         stage('Test') {
